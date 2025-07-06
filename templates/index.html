@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Phone Number Tracker</title>
+</head>
+<body>
+  <h2>Phone Number Locator</h2>
+  <input type="text" id="phoneNumber" placeholder="+14155552671">
+  <button onclick="trackNumber()">Track</button>
+
+  <div id="result"></div>
+
+  <script>
+    async function trackNumber() {
+      const number = document.getElementById("phoneNumber").value;
+
+      const response = await fetch("/locate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ number })
+      });
+
+      const data = await response.json();
+      const resultDiv = document.getElementById("result");
+
+      if (data.success) {
+        resultDiv.innerHTML = `
+          <p><strong>Location:</strong> ${data.location}</p>
+          <p><strong>Carrier:</strong> ${data.carrier}</p>
+          <p><strong>Timezones:</strong> ${data.timezones.join(', ')}</p>
+        `;
+      } else {
+        resultDiv.innerHTML = `<p>Error: ${data.message}</p>`;
+      }
+    }
+  </script>
+</body>
+</html>
